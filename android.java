@@ -99,7 +99,11 @@ CALLED_ACTIVITY
 
 		/*** FRAGMENT SENDING DATA TO MANAGER ***/
 /*
-
+1. declare a callback interface in fragment controller with method that return nothing and receive required objects
+2. declare a private field in fragment controller that hold inctance of callback object that confirms to that interface
+3. override onAttach method in fragment controller that receive context object
+	3.1. check if argument is instanceof required callback interface, if not throw new AssertionError()
+	3.2. save context argument object to the private field reference variable of type callback interface
+4. implement callback iterface in manager class and use arguments in code
+5. in fragment controller call implemented iterface method on ref var that holds callback object and pass required args
 */
-
-
