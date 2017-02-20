@@ -30,6 +30,20 @@ CALLED_ACTIVITY
 */
 
 
+		/*** SCREEN UTILITIES ***/
+/*
+1. create new class with two private fields: dpWidth and dpHeight of type float
+2. create constructor with Activity object as an argument
+	2.1. get referencre to the Display object and save it into the ref var by calling chained method 
+		getWindowManager() and getDefaultDisplay() on passed argument
+	2.2. get new instance of DisplayMetrics object and save it into the ref var by calling empty constructor
+	2.3. call getMetrics() method on Display ref var and pass DisplayMetrics ref var as an argument
+	2.4. calc density var of type float by calling getResources().getDisplayMetrics().density on passed argument
+	2.5. calc private fields by calling 'width'Pixels property on DisplayMetrics ref var, devided by dencity var
+3. create getter methods for private fields
+*/
+
+
 		/*** FRAGMENT INITIALIZATION ***/
 /*
 1. xml layout file should define appearance of the fragment 
@@ -81,3 +95,11 @@ CALLED_ACTIVITY
 	1.5. return fragment`s controller ref var
 2. manager class should create a ref var of type fragment controller and call static method from it and passing str obj
 */
+
+
+		/*** FRAGMENT SENDING DATA TO MANAGER ***/
+/*
+
+*/
+
+
