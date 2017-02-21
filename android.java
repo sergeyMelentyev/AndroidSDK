@@ -1,12 +1,32 @@
 
-		/*** NEW ACTIVITIES AND SENDING DATA ***/
-Intent (Context packageContext, Class<?> cls);	// intent constructor for changing activitis
-Intent putExtra (String name, boolean value);	// key-value pare for passing data between activitis
-void startActivity(Intent intent);	// start another activity
-void startActivityForResult(Intent intent, int requestCode);	// track what activity respond back
-final void setResult(int resultCode, Intent data);	// call in child activity to send back data
-Intent getIntent ();	// return the intent that started this activity
-boolean getBooleanExtra(String name, boolean defaultValue);	// retrieve the value from the extra
+		/*** SCREEN UTILITIES. GET SCREEN SIZES ***/
+/*
+1. create new class with two private fields: dpWidth and dpHeight of type float
+2. create constructor with Activity object as an argument
+	2.1. get instance of Display object and save it to the ref var by calling chained method 
+		getWindowManager() and getDefaultDisplay() on passed argument
+	2.2. get new instance of DisplayMetrics object and save it to the ref var by calling empty constructor
+	2.3. call getMetrics() method on Display ref var and pass DisplayMetrics ref var as an argument
+	2.4. calc density var of type float by calling getResources().getDisplayMetrics().density on passed argument
+	2.5. calc private fields by calling 'width'Pixels property on DisplayMetrics ref var, devided by density var
+3. create getter methods for private fields
+*/
+
+
+		/*** NETWORK UTILITIES. CHECK NETWORK AVAILABILITY AND WIFI ONLY ***/
+/*
+0. update manifest file with <uses-permission android.permission.ACCESS_NETWORK_STATE and INTERNET/>
+1. add protected no argument method that return boolean value
+2. create an instance of ConnectivityManager ('cm') by calling getSystemService(Context.CONNECTIVITY_SERVICE) 
+	method and save it to the ref var
+3. create an instance of NetworkInfo ('ni') by calling getActiveNetworkInfo() method on 'ni' and save it 
+	to the ref var
+4. check if ('ni' != null && ni.isConnectedOrConnecting())
+5. check if ('ni'.getType() != ConnectivityManager.TYPE_WIFI) return false and display a message that no wi-fi
+*/
+
+
+		/*** NEW ACTIVITY ***/
 /* INITIAL_ACTIVITY
 2. call static method from calledActivity pass current context and value, get Intent instance
 3. start new activity (startActivityForResult), pass Intent instance and request code (int const) for future tracking
@@ -30,21 +50,22 @@ CALLED_ACTIVITY
 */
 
 
-		/*** SCREEN UTILITIES ***/
+		/*** ASYNC TASK. SERIAL AND PARALLEL ***/
 /*
-1. create new class with two private fields: dpWidth and dpHeight of type float
-2. create constructor with Activity object as an argument
-	2.1. get referencre to the Display object and save it into the ref var by calling chained method 
-		getWindowManager() and getDefaultDisplay() on passed argument
-	2.2. get new instance of DisplayMetrics object and save it into the ref var by calling empty constructor
-	2.3. call getMetrics() method on Display ref var and pass DisplayMetrics ref var as an argument
-	2.4. calc density var of type float by calling getResources().getDisplayMetrics().density on passed argument
-	2.5. calc private fields by calling 'width'Pixels property on DisplayMetrics ref var, devided by dencity var
-3. create getter methods for private fields
+1. declare a class that extends AsyncTask with three generic parameters <input type, progress, return type>
+2. onPreExecute() will be executed before background thread, can communicate with UI
+3. doInBackgroud() receive a list of tasks (args) and return a value, the same type as AsyncTask class signature
+	3.1. will be executed on backgroud thread, no comminication with UI
+	3.2. call publishProgress() method and pass each task (arg) at a time (using for-loop and arr index)
+	3.3. override onProgressUpdate() that receive a list of args, index first arg from a list of args and undate UI
+4. onPostExecute() that receive argument the same type as AsyncTask class signature, can communicate with UI
+5. instantiate class that extends AsyncTask and save in instance variable
+	5.1. call execute(arguments list) method on instance variable, will work serially, one task after another
+	5.2. call executeOnExecuter(AsyncTask.THREAD_POOL_EXECUTOR, arguments list) method on instance var for parallel
 */
 
 
-		/*** FRAGMENT INITIALIZATION ***/
+		/*** FRAGMENT. INITIALIZATION ***/
 /*
 1. xml layout file should define appearance of the fragment 
 2. fragment controller java class extends Fragment superClass
@@ -73,7 +94,7 @@ CALLED_ACTIVITY
 */
 		
 
-		/*** FRAGMENT RECEIVING DATA FROM MANAGER ***/
+		/*** FRAGMENT. RECEIVING DATA FROM MANAGER ***/
 /*
 1. fragment controller class should contain public static final String field as an unique identifier
 2. manager class should call for empty constructor of Bundle object and save result in a reference variable
@@ -85,7 +106,8 @@ CALLED_ACTIVITY
 	5.1. retrieve string from Bundle object by calling getString(unique str key) on ref var from fifth paragraph
 */
 
-		/*** FRAGMENT WITH FACTORY METHOD RECEIVING DATA FROM MANAGER ***/
+
+		/*** FRAGMENT WITH FACTORY. RECEIVING DATA FROM MANAGER ***/
 /*
 1. fragment controller should create public static method that receive 'str' arg and return an inctance of it self
 	1.1. call for empty constructor of Bundle object and save result in a reference variable
@@ -97,7 +119,7 @@ CALLED_ACTIVITY
 */
 
 
-		/*** FRAGMENT SENDING DATA TO MANAGER ***/
+		/*** FRAGMENT. SENDING DATA TO MANAGER ***/
 /*
 1. declare a callback interface in fragment controller with method that return nothing and receive required objects
 2. declare a private field in fragment controller that hold inctance of callback object that confirms to that interface
@@ -107,3 +129,49 @@ CALLED_ACTIVITY
 4. implement callback iterface in manager class and use arguments in code
 5. in fragment controller call implemented iterface method on ref var that holds callback object and pass required args
 */
+
+
+		/*** HTTP CONNECTION. STRING DATA AND SIMPLE AUTH ***/
+/*
+1. daclare a BufferedReader ref var and assign a null
+2. declare a byte array and call getBytes() method on a concatenated Strings arguments
+3. declare a StringBuilder ref var by calling chaned methods
+	no arg constructor.apped("Basic").append(Base64.encodeToString(byte arr ref var, Base64.DEFAULT))
+4. in try block create a new URL obj by calling constructor that receive a string as an argument
+	4.1. create HttpURLConnection obj by calling openConnection() method on URL instance var
+	4.2. call addRequestProperty("Authorization", StringBuilder ref var with toString method) on prev ref var
+	4.2. declare and initialize a StringBuilder object
+	4.3. call constructor of BufferedReader obj that receive new InputStreamReader obj that receive 
+		HttpURLConnection.getInputStream()
+	4.4. create a new String object
+	4.5. while (String obj = reader.readLine()) not equal to null, append line to StringBuilder ref var
+	4.6. return StringBuilder ref var with toString() method call
+5. in final block call close() method on BufferedReader ref var
+*/
+
+
+		/*** HTTP CONNECTION. BITMAP IMAGE ***/
+/*
+0. all code must be placed in background thread, doInBackgroud() method for example
+	0.1. class that describe your specifit obj should contain private field of type Bitmap with setter/getter methods
+1. declare a string url for exact image
+2. declare a ref var of type InputStream and call constructor of URL object with image url string argument, 
+	chained by getContent() method call
+3. declare a ref var of type Bitmap and call BitmapFactory.decodeStream(ref var of type InputStream)
+4. set new property to your Object
+5. close InputStream object
+6. get reference to ImageView widget and call setImageBitmap() method on it
+*/
+
+
+		/*** XML PARSER ***/
+/*
+
+*/
+
+
+		/*** JSON PARSER ***/
+/*
+
+*/
+
