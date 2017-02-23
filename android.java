@@ -26,27 +26,63 @@
 */
 
 
+		/*** SAVE INSTANCE STATE ***/
+/*
+1. override onSaveInstanceState(argument of type Bundle) method, add logic befor call to super method
+	1.1. call put'Strint'() method on argument and private static final String constant as a key and a value
+2. override onRestoreInstanceState(argument of type Bundle) method, add logic after call to super method
+	2.1. call get'String'() method on an argument and pass constant as a key
+*/
+
+
+		/*** LIST VIEW ***/
+/*
+1. create java class that will represent your custom data type ('data')
+2. create xml layout that will hold ListView widget ('listView')
+3. create xml layout 'cellView' that will desribe each row in 'listView' widget, add widgets
+4. create java class that extends ArrayAdapter and set generic declaration to 'data' type
+	4.1. declare two private fields, first will hold reference to List<'data'> object, second to LayoutInflater object
+	4.2. public constructor should receive two arguments, Context object and List<'data'> object
+		4.2.1. call super class constructor and pass context, 'cellView' layout recource, List<'data'> object
+		4.2.2. save List<'data'> object argument to the private field
+		4.2.3. save LayoutInflater.from(context) to the private field
+	4.3. override getView('position of each row', 'cellView', 'parent view') method
+		4.3.1 get current object from List<'data'> by referencing current position in array, save to ref var
+		4.3.2. connect your widgets from 'cellView' with ref vars
+		4.3.3. update data in widgets
+		4.3.4. return 'cellView' ref var
+5. create java file that will call onCreate() method, connect ListView widget with ref var
+	5.1. call your custom ArrayAdapter class constructor, pass context and ListArray, save to ref var
+	5.2. call setAdapter() method on ListView widget ref var and pass your custom adapter
+*/
+
+
+		/*** RECYCLE VIEW ***/
+/*
+
+*/
+
+
 		/*** NEW ACTIVITY ***/
 /* INITIAL_ACTIVITY
 2. call static method from calledActivity pass current context and value, get Intent instance
 3. start new activity (startActivityForResult), pass Intent instance and request code (int const) for future tracking
-7. @Override onActivityResult(requestCode, resultCode, Intent) for all callbacks from all Activities
-	check if requestCode is correct and call static method from calledActivity, pass Intent as an agr, save result
+7. @Override onActivityResult() method for all callbacks from all Activities
+	7.1. check if requestCode is correct and call static method from calledActivity, pass Intent as an agr, save result
 8. use result in initialActivity
 
 CALLED_ACTIVITY
-1. create static method that receive initialActivity context and value as parameters
-	init new Intent object, pass context and current calledActivity.this object
-	put extra value (key const str - value argument)
-	return new instance
-
-4. as activity created call getIntent().get"Boolean"Extra, pass key-const-str and default value if failed, save result
+1. create static method that receive initialActivity context and value as arguments
+	1.1. init new Intent object, pass context and current calledActivity.this object
+	1.2. put extra value (key const string - value argument)
+	1.3. return new instance
+4. as activity created call getIntent().get'Boolean'Extra, pass key-const-str and default value if failed, save result
 5. prepare for answer back, create new Intent instance and save reference to it
-	put extra values for returning back to initialActivity (key const str - value)
-	call setResult method and pass RESULT_OK status and ref to new created Intent instance
-	call static method for answer handling
+	5.1. put extra values for returning back to initialActivity (key const str - value)
+	5.2. call setResult method and pass RESULT_OK status and ref to new created Intent instance
+	5.3. call static method for answer handling
 6. create static method for answer handling that receive created Intent instance and return boolean
-	return result of instance.get"Boolean"Extra(key-const-str, default value if failed)
+	6.1. return result of instance.get'Boolean'Extra(key-const-str, default value if failed)
 */
 
 
@@ -62,6 +98,12 @@ CALLED_ACTIVITY
 5. instantiate class that extends AsyncTask and save in instance variable
 	5.1. call execute(arguments list) method on instance variable, will work serially, one task after another
 	5.2. call executeOnExecuter(AsyncTask.THREAD_POOL_EXECUTOR, arguments list) method on instance var for parallel
+*/
+
+
+		/*** ASYNC TASK. SERIAL AND PARALLEL ***/
+/*
+
 */
 
 
@@ -162,16 +204,3 @@ CALLED_ACTIVITY
 5. close InputStream object
 6. get reference to ImageView widget and call setImageBitmap() method on it
 */
-
-
-		/*** XML PARSER ***/
-/*
-
-*/
-
-
-		/*** JSON PARSER ***/
-/*
-
-*/
-
