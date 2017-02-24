@@ -64,25 +64,50 @@
 
 
 		/*** NEW ACTIVITY ***/
-/* INITIAL_ACTIVITY
-2. call static method from calledActivity pass current context and value, get Intent instance
-3. start new activity (startActivityForResult), pass Intent instance and request code (int const) for future tracking
-7. @Override onActivityResult() method for all callbacks from all Activities
-	7.1. check if requestCode is correct and call static method from calledActivity, pass Intent as an agr, save result
-8. use result in initialActivity
+/*
+0. create xml layout taht will represent new activity
+	0.1. add this xml into manifest file with <android:parentActivityName/>
+1. create public java class, extend AppCompatActivity, override onCreate(), it should controll new activity xml layout
+	1.1. declare private final static String for future Intent (from initial to called activity) identification
+	1.2. declare private final static String for future Intent (from called to initial activity) identification
+	1.3. add public static method 'intentCallBack'() that will take Context obj and 'String' data value
+		1.3.1. call Intent constructor, pass Context of the application package implementing this class and
+			the component class that is to be used for the intent, save result in ref var
+		1.3.2. call putExtra() method on this ref var and pass key str of the extra data and 'String' data value
+		1.3.3. return ref var
+2. inside 'init activity' declare private final static int as a 'requestCode' for Intent identification
+	2.1. call static 'intentCallBack'() method from 'called activity', pass context and 'String' data value, 
+		save result as ref var
+	2.2. call startActivityForResult() method and pass new ref var of Intent obj and 'requestCode' arg as an int value
+3. inside 'called activity' call getIntent() method that return the intent that started this activity, chained call
+	get'String'Extra() method, pass key str for retrieving passed 'String' data value and save result in rev var
+	3.1. use reveived data
 
-CALLED_ACTIVITY
-1. create static method that receive initialActivity context and value as arguments
-	1.1. init new Intent object, pass context and current calledActivity.this object
-	1.2. put extra value (key const string - value argument)
-	1.3. return new instance
-4. as activity created call getIntent().get'Boolean'Extra, pass key-const-str and default value if failed, save result
-5. prepare for answer back, create new Intent instance and save reference to it
-	5.1. put extra values for returning back to initialActivity (key const str - value)
-	5.2. call setResult method and pass RESULT_OK status and ref to new created Intent instance
-	5.3. call static method for answer handling
-6. create static method for answer handling that receive created Intent instance and return boolean
-	6.1. return result of instance.get'Boolean'Extra(key-const-str, default value if failed)
+4. in order to send data back from 'called activity' to 'init activity' after user press back button
+	4.1. declare new Intent object and call no argument constructor, save result in ref var
+	4.2. call putExtra() method on this ref var and pass key str of the extra data and 'String' data value
+	4.3. call setResult() method to set the result that 'called activity' will return to its caller and pass
+		RESULT_OK constant and Intent ref var
+5. inside 'called activity' declare static method that will take Intent obj as an arg and return a 'String'
+	5.1. call getStringExtra() method on Intent arg and pass key str of the extra data, return result
+6. inside 'init activity' override onActivityResult() method that receive arguments: 
+	'requestCode' arg (int request code originally supplied to startActivityForResult(), 
+		allowing to identify who this result came from
+	'resultCode' arg int result code returned by the child activity through its setResult()
+	'data' an Intent which can return result data to the caller
+	6.1. check if 'requestCode' arg is uequal to constant key for current Intent identification
+	6.2. call static method from 'called activity' pass 'data' Intent arg and save result in ref var
+	6.3. use data
+*/
+
+
+		/*** PASS OBJECTS BETWEEN ACTIVITIES ***/
+/*
+1. create java class that will represent your custom data type ('data'), add constructor, getter/setter methods
+2. in auto generate menu choose parcelable option, select required fields
+3. while calling putExtra() method in 'init activity' pass unique str key and 'data' object as parameters
+4. in 'called activity' call getIntent().getExtra().getParcelable('str key') and save result in ref var of type 'data'
+5. use data
 */
 
 
@@ -98,12 +123,6 @@ CALLED_ACTIVITY
 5. instantiate class that extends AsyncTask and save in instance variable
 	5.1. call execute(arguments list) method on instance variable, will work serially, one task after another
 	5.2. call executeOnExecuter(AsyncTask.THREAD_POOL_EXECUTOR, arguments list) method on instance var for parallel
-*/
-
-
-		/*** ASYNC TASK. SERIAL AND PARALLEL ***/
-/*
-
 */
 
 
@@ -203,4 +222,17 @@ CALLED_ACTIVITY
 4. set new property to your Object
 5. close InputStream object
 6. get reference to ImageView widget and call setImageBitmap() method on it
+*/
+
+
+		/*** SHARED PRIFERENCES ***/
+/*
+1. define SharedPreferences.Editor instance by calling getSharedPreferences() method, pass 'str key' and mode, 
+	chained call edit() method, save result in ref var
+2. call putString() method on this ref var and pass 'value str key' and a value
+3. call apply() method on this ref var
+
+4. in order to retreive value from shared prefs define ref var of type SharedPreferences and call 
+	getSharedPreferences() method with 'str key' and mode
+5. call getString() method on this ref var, pass 'value str key' and default value
 */
