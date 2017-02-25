@@ -229,10 +229,51 @@
 /*
 1. define SharedPreferences.Editor instance by calling getSharedPreferences() method, pass 'str key' and mode, 
 	chained call edit() method, save result in ref var
-2. call putString() method on this ref var and pass 'value str key' and a value
+2. call put'String'() method on this ref var and pass 'str key' and a value
 3. call apply() method on this ref var
 
 4. in order to retreive value from shared prefs define ref var of type SharedPreferences and call 
 	getSharedPreferences() method with 'str key' and mode
-5. call getString() method on this ref var, pass 'value str key' and default value
+5. call getString() method on this ref var, pass 'str key' and default value
+*/
+
+
+		/*** SQLITE DATA BASE ***/
+/*
+1. create java class that will represent your custom data type ('data') with private fields and getters/setters
+	1.1. add toValues() no argument method, inside create ref var of type ContentValues by calling
+		constructor with number of raws in the db table
+	1.2. call put() method on ref var and pass 'key' the name of the value to put and value the data
+2. create java class that will hold SQlite base commands as a public static final fields
+	2.1. SQL_CREATE field should contain SQLite command "CREATE TABLE " + TABLE_ITEMS + "(" +
+            COLUMN_ID + " TEXT PRIMARY KEY," +
+            COLUMN_NAME + " TEXT," +
+            COLUMN_POSITION + " INTEGER," +
+            COLUMN_PRICE + " REAL," +
+            COLUMN_IMAGE + " TEXT" + ");";
+    2.2. public static final String SQL_DELETE = "DROP TABLE " + TABLE_ITEMS
+3. create java class that will manage SQLite database, extends SQLiteOpenHelper
+	3.1. add two public static final fields 'DB_FILE_NAME' and 'DB_VERSION'
+	3.2. add one argument constructor that receive Context obj and call super class constructor with args
+		Context obj, name of the db, factory for creating cursor obj or null for the default, version number of the db
+	3.3. @Override onCreate('db') method and call execSQL('SQL_CREATE command') on 'db' arg
+	3.4. @Overrideo nUpgrade() method and call execSQL('SQL_DELETE command') on 'db' arg
+4. create java class that will manage SQlite 'data source'
+	4.1. add two private fields of type Context and SQLiteDatabase, one public field of type SQLiteOpenHelper
+	4.2. create constructor that will receive Context as an argument
+		4.2.1. save ref of the Context obj to the private field
+		4.2.2. initialize public field of type SQLiteOpenHelper by calling your SQLite db manager class constructor
+		4.2.3. initialize private field of type SQLiteDatabase by calling getWritableDatabase() method
+			on ref var of type SQLiteOpenHelper
+	4.3. create open() method that will inititialize private field of type SQLiteDatabase by calling 
+		the same methods as constructor do
+	4.4. create close() method that will close() method on ref var of type SQLiteOpenHelper
+	4.5. create createItem() method that will return ref var of your custom type 'data' and receive ref var same type
+		4.5.1. init ref var of type ContentValues by calling toValues() method on passed argument and save it
+		4.5.2. call insert() method on ref var of type SQLiteDatabase and pass str 'table' to insert the row into,
+			null, ref var of type ContentValues
+5. in main activity class define ref var of your custom SQlite 'data source' type
+6. call your SQLite 'data source' constructor, pass context obj as an arg and save result in ref var
+		of your custom SQlite 'data source' type
+5. use open() and close() db`s methods inside onPause() and onResume() methods in order to privent db leaks
 */
