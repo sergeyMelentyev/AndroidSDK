@@ -39,10 +39,10 @@
 /*
 1. create java class that will represent your custom data type ('data')
 2. create xml layout that will hold ListView widget ('listView')
-3. create xml layout 'cellView' that will desribe each row in 'listView' widget, add widgets
+3. create xml layout 'cellView' that will desribe each row in 'listView', add widgets
 4. create java class that extends ArrayAdapter and set generic declaration to 'data' type
-	4.1. declare two private fields, first will hold reference to List<'data'> object, second to LayoutInflater object
-	4.2. public constructor should receive two arguments, Context object and List<'data'> object
+	4.1. declare two private fields, first will hold reference to List<'data'> object, second to LayoutInflater obj
+	4.2. public constructor should receive two args, Context obj and List<'data'> obj
 		4.2.1. call super class constructor and pass context, 'cellView' layout recource, List<'data'> object
 		4.2.2. save List<'data'> object argument to the private field
 		4.2.3. save LayoutInflater.from(context) to the private field
@@ -59,7 +59,36 @@
 
 		/*** RECYCLE VIEW ***/
 /*
-
+1. in main activity add recycler view widget with id and tag <app:layoutManager="LinearLayoutManager"/>
+2. create 'list_item' xml that will represent each item in recycler view, add widgets with id`s
+3. create 'data_item' java file that will represent your custom data type, add constructor and getters/setters
+4. creare 'data_adapter' java file, extends RecyclerView.Adapter<'inner_class'>
+	4.1. add public static 'inner_class', extends RecyclerView.ViewHolder
+		4.1.1. declare public fields that will hold ref to the widgets from 'list_item' xml
+		4.1.2. declare public field that will hold ref to View obj
+		4.1.3. add public constructor that receive View obj as an arg
+			4.1.3.1. call super class constructor
+			4.1.3.2. bind class public fields to widgets
+			4.1.3.3. bind View obj to class public field
+	4.2. declare private fields for List<'data_item'> and Context obj
+	4.3. add constructor that receive Context obj and List<'data_item'> as an args
+		4.3.1. save args to the private fields
+	4.4. @Override all three required methods
+		4.4.1. in onCreateViewHolder() create ref var of type LayoutInflater and obtain the LayoutInflater from 
+			the given Context obj by calling from() method on LayoutInflater and passing mContext from public field
+			4.4.1.1 create ref var of type View and call inflater.inflate('int resource layout', 
+				'view to be the parent of the generated hierarchy', 'boolean value for attachToRoot');
+			4.4.1.2. create ref var of type ViewHolder by calling constructor with ref var of type View argument
+			4.4.1.3. return ref var of type ViewHolder
+		4.4.2. in onBindViewHolder() create ref var of type 'data_item' by calling get() method on List<'data_item'>
+			private field and passing 'int position' as an arg
+			4.4.2.1. use data by calling 'setText' on passed arg ('inner_class') public field
+			4.4.2.2. setOnClickListener() on passed arg ('inner_class') public field and call Intent obj
+		4.4.3. in getItemCount() return size of List<'data_item'> private field
+5. in activity that holds recycler view widget init ref var of 'data_adapter' by calling constructor that receive
+	 Context obj and List<'data_item'>
+	5.1. bind RecyclerView widget to the ref var
+	5.2. call setAdapter() method on RecyclerView ref var and pass 'data_adapter' ref var as an argument
 */
 
 
@@ -101,7 +130,7 @@
 */
 
 
-		/*** PASS OBJECTS BETWEEN ACTIVITIES ***/
+		/*** PASS PARCELABLE OBJECTS BETWEEN ACTIVITIES ***/
 /*
 1. create java class that will represent your custom data type ('data'), add constructor, getter/setter methods
 2. in auto generate menu choose parcelable option, select required fields
@@ -126,13 +155,47 @@
 */
 
 
+		/*** ASYNC TASK WITH FRAGMENT ***/
+/*
+1. create 'controller' java class, extends Fragment super class, should contain public empty constructor
+2. create an interface with one method that returns void and receive one arg of type 'String' obj
+3. declare private field of type 'interface'
+4. @Override onCreate() method and call setRetainInstance() method with boolean parameter
+5. @Override onAttach() and call super class constructor, pass Context obj
+	5.1. check if arg of type Context is instanceof 'interface', if not throw new AssertionError()
+	5.2. save arg of type Context obj to the private field  of type 'interface'
+6. implement public method 'task' that receive varargs of type 'String' and return void
+	6.1. initialize private nested class by calling no arg constructor, save in ref var
+	6.2. execute() method on ref var and pass varargs
+7. declare private nested class that extends AsyncTask<'String', 'String', 'String'>
+	7.1. @Override doInBackground() method and pass varargs of 'String' type
+		7.1.1. create a for-each loop and iterate over each varargs argument
+		7.1.2. call publishProgress() method and pass each iterable obj
+	7.2. @Override onProgressUpdate() method and pass varargs of 'String' type
+		7.2.1. call method from 'interface' declaration on private field of type 'interface'
+
+7. in main activity class implement 'interface'
+	7.1. @Override method from 'interface' and use data from passed argument
+	7.2. add private static final TAG field for fragment identification
+	7.3. add private field of type 'controller'
+	7.4. get FragmentManager by calling getSupportFragmentManager() method and save into ref var
+	7.5. bind private field of type 'controller' by calling findFragmentByTag() method on FragmentManager ref var
+		and pass TAG field
+	7.6. check if private field of type 'controller' is equal to null, if true, call 'controller' constructor 
+		and save result in private field of type 'controller'
+	7.7. chained call beginTransaction().add(private field of type 'controller', TAG).commit() 
+		on ref var of type FragmentManager
+8. set setOnClickListener() and call 'task' method from 'controller' class, pass args
+*/
+
+
 		/*** FRAGMENT. INITIALIZATION ***/
 /*
-1. xml layout file should define appearance of the fragment 
-2. fragment controller java class extends Fragment superClass
+1. create new xml layout file that will define appearance of the fragment 
+2. create fragment controller java class, extends Fragment superClass
 	2.0. an empty public constructor is required
-	2.1. @Override onCreateView method
-		2.1.1. create an instance of View object and call inflate method on passed LayoutInflater argument, pass
+	2.1. @Override onCreateView() method
+		2.1.1. create an instance of View obj and call inflate() method on passed LayoutInflater arg, pass
 			xml fragment layout resourse ID, ViewGroup argument and boolean value of attachToRoot argument
 		2.1.2. return View`s reference variable
 
@@ -142,35 +205,36 @@
 
 4. manage fragment dynamically via manager class and manager xml layout
 	4.1. add FrameLayout widget with unique id in manager xml layout, fragment will be injected here
-	4.2. create public static final String tag with uniqe fragment identifier
-	4.3. create an instance of fragment controller class and save to the reference variable
-	4.4. get FragmentManager by calling getSupportFragmentManager method and save it to the reference variable
-		4.4.1. call chained methods on fragment manager beginTransaction().
-			add(container ID where to inject fragment, fragment controller instance var, unique tag).commit()
+	4.2. create public static final String tag with unique fragment identifier
+	4.3. create an instance of your fragment controller class and save to the ref var
+	4.4. get FragmentManager by calling getSupportFragmentManager method and save it to the ref var
+		4.4.1. call chained methods on fragment manager 
+			beginTransaction().add(container ID where to inject fragment, 
+				fragment controller instance var, unique tag).commit()
 		4.4.2. in order to remove fragment by clicking back button in native android menu, add to chained call
 			.addToBackStack(null) method just before .add() method
 	4.5. if fragment controller already exist in manager class but out of scope,
-		create a reference variable of type Fragment and call getSupportFragmentManager method on it,
+		create a ref var of type Fragment and call getSupportFragmentManager method on it,
 		chained call to findFragmentByTag method with uniqe tag name
 */
 		
 
-		/*** FRAGMENT. RECEIVING DATA FROM MANAGER ***/
+		/*** FRAGMENT. RECEIVING SIMPLE DATA FROM MANAGER ***/
 /*
 1. fragment controller class should contain public static final String field as an unique identifier
-2. manager class should call for empty constructor of Bundle object and save result in a reference variable
-	2.1. call put'String'(unique str key, string object) method on 2. reference variable
-3. create an instance of your fragment controller class and save ref to the reference variable
-	3.1. call setArguments() method on frament`s controller ref var and pass ref var of type Bundle object
+2. manager class should call for empty constructor of Bundle object and save result in a ref var
+	2.1. call put'String'('unique str key', string object) method on ref var of type Bundle
+3. create an instance of your fragment controller class and save to the ref var
+	3.1. call setArguments() method on frament`s controller ref var and pass ref var of type Bundle obj
 4. continue on from paragraph #4.4. in fragment init part
 5. in fragment controller class create new var of type Bundle by calling getArguments() method
-	5.1. retrieve string from Bundle object by calling getString(unique str key) on ref var from fifth paragraph
+	5.1. retrieve string from Bundle object by calling getString('unique str key') on ref var of type Bundle
 */
 
 
-		/*** FRAGMENT WITH FACTORY. RECEIVING DATA FROM MANAGER ***/
+		/*** FRAGMENT WITH FACTORY. RECEIVING SIMPLE DATA FROM MANAGER ***/
 /*
-1. fragment controller should create public static method that receive 'str' arg and return an inctance of it self
+1. fragment controller should create public static method that receive 'str' arg and return an inctance of itself
 	1.1. call for empty constructor of Bundle object and save result in a reference variable
 	1.2. call put'String'(unique str key, argument) method on Bundle`s object reference variable
 	1.3. create an instance of fragment controller and save to the reference variable
@@ -180,12 +244,13 @@
 */
 
 
-		/*** FRAGMENT. SENDING DATA TO MANAGER ***/
+		/*** FRAGMENT. SENDING SIMPLE DATA TO MANAGER ***/
 /*
 1. declare a callback interface in fragment controller with method that return nothing and receive required objects
 2. declare a private field in fragment controller that hold inctance of callback object that confirms to that interface
 3. override onAttach method in fragment controller that receive context object
-	3.1. check if argument is instanceof required callback interface, if not throw new AssertionError()
+	3.0. call super class constructor and pass context as an arg
+	3.1. check if arg is instanceof required callback interface, if not throw new AssertionError()
 	3.2. save context argument object to the private field reference variable of type callback interface
 4. implement callback iterface in manager class and use arguments in code
 5. in fragment controller call implemented iterface method on ref var that holds callback object and pass required args
