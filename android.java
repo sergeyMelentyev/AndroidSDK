@@ -271,121 +271,67 @@
 
 
 
-		/*** FRAGMENT BASICS ***/
+		/*** FRAGMENT SINGLE VIEW ***/
 /*
-
-1. define hight level 'activity_layout' xml that will host any fragment
-	1.1. FrameLayout should be used to display a single item
-
-2. define 'fragment_conteiner' xml file with unique id, this fragment will be injected
-	2.1. add widgets
-
-3. define abstract 'GenericFragmentActivity' class with boilerplate code
-	3.1. define abstract no arguments method that will return instance of Fragment obj
-	3.2. override onCreate()
-		3.2.1. pass 'activity_layout' generic xml to setContentView() method as an arg
-		3.2.2. get fragment manager
-		3.2.3. find fragment by passing id of FrameLayout from 'activity_layout'
-		3.2.4. if fragment equals null, call abstract method
-		3.2.5. start a series of edit operations and add('where', 'what');
-
-4. define concrete 'YourFragmentActivity' class
-	4.1. override abstract method from inhereted abstract class and return result of calling static
-		getInstance() method from 'YourFragmentManager' controller
-	4.1. add class to the manifest file
-
-5. define 'YourFragmentManager' controller class
-	5.1. add public static getInstance() method, that return new instance of its class
-	5.2. override onCreateView()
-		5.2.1. get View obj from LayoutInflater by calling inflate('fragment_conteiner') method on it
-
+define 'host_layout' where fragments will be injected
+define 'content_layout' with widgets, this one will be injected
+define abstract 'any_fragment_activity' class with boilerplate code
+	add abstract method that return instance of Fragment obj
+	onCreate() pass 'host_layout' to the setContentView()
+	get fragment manager
+	find fragment instance by passing ID of 'host_layout' to the manager
+	start a series of edit operations add 'where' and 'what'
+define concrete 'your_fragment_activity' class
+	override abstract method that return instance of 'your_fragment_controller'
+define 'your_fragment_controller'
+	add static newInstance() that return new instance of itself
+	onCreateView() get View obj by inflating 'content_layout'
 */
 
 
 
 		/*** RECYCLE VIEW IN FRAGMENT ***/
 /*
-
-1. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-1. create xml file with FrameLayout and id 'fragment_container', this will be one injection point for all fragments
-2. create abstract 'SingleFragmentActivity' class, extends AppCompatActivity, generic class that dynamically 
-	binds one fragment constainer with any fragment controller on runtime
-	2.1. add abstract 'createFragment()' method that return Fragment obj and receive no args
-	2.2. override onCreate() method
-		2.2.1. declare ref var 'manager' of type FragmentManager and call getSupportFragmentManager() method
-		2.2.2. declare ref var 'fragment' of type Fragment and call findFragmentById('fragment_container') method 
-			on 'manager' ref var
-		2.2.3. check if 'fragment' is equal to null, if true, call 'createFragment()' abstract method, save returned
-			obj into 'fragment' ref var
-			2.2.3.1. chained call beginTransaction().add('fragment_container', 'fragment ref var', null)
-				.commit() methods on 'manager' ref var
-
-2. create concrete class 'ListActivity', add it to the manifest xml with <activity> tag, extends 
-	'SingleFragmentActivity' abstract class
-	2.1. override anstract method 'createFragment()' and return new instanse of your fragment controller class
-		'ListFragment', at this point we binding fragment`s controller class to the fragment activity xml file
-
-3. create fragment controller class 'ListFragment', extends Fragment, this class will nest RecyclerView.ViewHolder
-	and RecyclerView.Adapter inner classes in order to implement RecyclerView widget in fragment
-	3.1. add private field of type RecyclerView
-	3.2. add private field of type 'YourAdapter'
-	3.3. override onCreateView() method
-		3.3.1. declare raf var 'view' of type View and call inflate() method on arg of type LayoutInflater,
-			pass xml layout name that should be injected, arg of type ViewGroup, false. At this point we define
-			what kind of content would be shown in created generic fragment container
-		3.3.2. bind ref var in private field of type RecyclerView with widget in xml, find by id
-		3.3.3. call setLayoutManager() method on ref var of type RecyclerView 
-			and pass new instance of 'linear' layout manager with getActivity() parameter
-		3.3.4. declare ref var of type 'YourSingletonObj' and call static method from that class in order to get
-			instance of this obj. That obj should contain array of all custom 'data' objects in app.
-			Pass getActivity() as a parameter
-		3.3.5. declare List<'data'> objects and get it from 'YourSingletonObj' instance, by calling expected method
-		3.3.6. update private field of type 'YourAdapter' by calling constructor of RecyclerView.Adapter inner class
-			and pass List<'data'> objects
-		3.3.7. call setAdapter() method on private field ref var of type 'RecyclerView' and pass 'YourAdapter'
-			private field ref var
-
-4. create inner class 'YourAdapter' extends RecyclerView.Adapter<'YourHolder'>
-	4.1. declare private field of type List<'data'>
-	4.2. add public constructor that receive List<'data'> as an argument
-		4.2.1. bind passed argument with private field
-	4.3. override onCreateViewHolder() method that will be called each time when RecyclerView needs a new view
-		for each obj in List<'data'>
-		4.3.1. declare ref var 'layout_inf' of type LayoutInflater and call LayoutInflater.from(getActivity())
-		4.3.2. return new 'YourHolder' obj while passing layout_inf ref var and arg of type ViewGroup
-	4.4. override onBindViewHolder() method that will be called by RecyclerView to display at the specified position
-		4.4.1. declare ref var of type 'data' and call get() method on private field of type List<'data'> while
-			passing current position int value from argument
-		4.4.2. call bind() method on 'YourHolder' arg and pass ref var of type 'data'
-	4.5. override getItemCount() method and return size of private field of type List<'data'>
-
-5. create inner class 'YourHolder' extends RecyclerView.ViewHolder implements View.OnClickListener that will be
-	describes an item view and metadata about its place within the RecyclerView
-	5.1. declare private fields of required widgets type
-	5.2. declare private field of type 'data' object
-	5.3. add public constructor that receive LayoutInflater obj and ViewGroup obj as an args
-		5.3.1. call super class constructor and pass inflate('layout xml of cell', 'ViewGroup ref var', false) method
-			on LayoutInflater ref var
-		5.3.2. use public final field 'itemView' of type View from ViewHolder super class for binding all
-			private fileds with widgets
-		5.3.3. call setOnClickListener() method on 'itemView' and pass 'this' as an arg
-	5.4. declare bind() method that receive 'data' obj as an arg and return void
-		5.4.1. bind private field of type 'data' obj with passed arg of type 'data' obj
-		5.4.2. use data to update widgets in each cell
-	5.5. override onClick() method, call getActivity() in order to get fragment that currently associated with
+define FrameLayout layout, fragments will be injected here
+define RecyclerView layout, this one will be injected
+define LinearLayout layout, this one will hold each cell view
+define DataItem class, should describe your data
+define DetaItemList singleton class
+	add private static field of itself`s type
+	add private static field of type List<Gen>
+	add private constructor, initialize List<Gen> private field
+	add public static getInstance(Context) method, check if instance of itself is null, if true, call constructor
+	add methods to get nesessery fields
+define abstract GenericActivity class, with abstract method that return Fragment obj and boilerplate code
+	get fragment manager, find fragment by passing ID of layout where fragment will be injected
+	check for null, call abstract method, start a series of edit operations add 'where' and 'what'
+define concrete FragmentActivity class, override abstract method that return instance of FragmentController
+define concrete FragmentController class, will hold RecyclerView.Adapter and RecyclerView.ViewHolder
+	add public static method that return instance of itself
+	add private field of type List<Gen>
+	override onCreate() initialize List<Gen> private field by calling static getInstance(Context) method from 
+		DetaItemList singleton class
+	define private inner class RecyclerView.ViewHolder, will describe each cell view
+		add private field of widget type from cell view layout
+		add private field of DataItem class
+		add constructor that receive LayoutInflater and ViewGroup as args
+			call super constructor and pass LayoutInflater.inflate('cell view layout', 'where', false)
+			bind each private field of widget type by finding ID from itemView ref var
+		add bindMethod() method that receive DataItem arg
+			bind private field of type DataItem class with passed arg
+			use data fields from DataItem class to populate UI
+	define private inner class RecyclerView.Adapter<RecyclerView.ViewHolder>
+		override onCreateViewHolder(), get LayoutInflater obj by calling from() method and pass current fragment
+			return new instance of RecyclerView.ViewHolder inner class, pass LayoutInflater and ViewGroup objs
+		override onBindViewHolder(), get DataItem obj by calling get() method on private field of type List<Gen>
+			and pass position arg
+		override getItemCount(), return size of List<Gen>
+	override onCreateView(), get View obj by inflating RecyclerView fragment layout
+		bind RecyclerView with controller by finding widget ID
+		set layout manager on RecyclerView ref var
+		call RecyclerView.Adapter constructor and save in ref var
+		call setAdapter() method on RecyclerView ref var and pass adapter
+		return View obj
 */
 
 
@@ -393,6 +339,9 @@
 		/*** LIST VIEW IN FRAGMENT ***/
 
 /*
+
+
+
 
 1. create java class that will represent your custom data type ('data')
 2. create xml layout that will hold ListView widget ('listView')
@@ -488,22 +437,4 @@
 
 
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
